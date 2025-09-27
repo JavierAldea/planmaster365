@@ -1,10 +1,9 @@
 openapi: 3.0.3
 info:
   title: PlanMaster 365 (Graph subset)
-  version: 1.0.2
+  version: 1.0.3
 servers:
   - url: https://graph.microsoft.com
-    description: Microsoft Graph root
 security:
   - oauth2: [offline_access, User.Read, Mail.ReadWrite, Mail.Send, Tasks.ReadWrite, Calendars.ReadWrite, MailboxSettings.Read]
 components:
@@ -20,8 +19,8 @@ components:
             User.Read: Read basic profile
             Mail.ReadWrite: Read and write user mail
             Mail.Send: Send mail
-            Tasks.ReadWrite: Read and write tasks (To Do)
-            Calendars.ReadWrite: Read and write calendar events
+            Tasks.ReadWrite: Read/write Microsoft To Do tasks
+            Calendars.ReadWrite: Read/write calendar events
             MailboxSettings.Read: Read mailbox settings (timezone, working hours)
 paths:
   /v1.0/me/mailboxSettings:
@@ -30,6 +29,7 @@ paths:
       summary: Obtener zona horaria y workingHours
       responses:
         '200': { description: OK }
+
   /v1.0/me/messages:
     get:
       operationId: listMail
@@ -44,6 +44,7 @@ paths:
           description: Required when using $search
       responses:
         '200': { description: OK }
+
   /v1.0/me/messages/{id}:
     patch:
       operationId: updateMailCategories
@@ -65,6 +66,7 @@ paths:
                   items: { type: string }
       responses:
         '200': { description: OK }
+
   /v1.0/me/sendMail:
     post:
       operationId: sendMail
@@ -80,12 +82,14 @@ paths:
                 saveToSentItems: { type: boolean }
       responses:
         '202': { description: Accepted }
+
   /v1.0/me/todo/lists:
     get:
       operationId: listTodoLists
       summary: Listar listas de To Do
       responses:
         '200': { description: OK }
+
   /v1.0/me/todo/lists/{listId}/tasks:
     get:
       operationId: listTodoTasks
@@ -116,6 +120,7 @@ paths:
                 dueDateTime: { type: object }
       responses:
         '201': { description: Created }
+
   /v1.0/me/events:
     get:
       operationId: listEvents
