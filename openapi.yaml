@@ -1,9 +1,10 @@
 openapi: 3.0.3
 info:
   title: PlanMaster 365 (Graph subset)
-  version: 1.0.0
+  version: 1.0.2
 servers:
-  - url: https://graph.microsoft.com/v1.0
+  - url: https://graph.microsoft.com
+    description: Microsoft Graph root
 security:
   - oauth2: [offline_access, User.Read, Mail.ReadWrite, Mail.Send, Tasks.ReadWrite, Calendars.ReadWrite, MailboxSettings.Read]
 components:
@@ -23,13 +24,13 @@ components:
             Calendars.ReadWrite: Read and write calendar events
             MailboxSettings.Read: Read mailbox settings (timezone, working hours)
 paths:
-  /me/mailboxSettings:
+  /v1.0/me/mailboxSettings:
     get:
       operationId: getMailboxSettings
       summary: Obtener zona horaria y workingHours
       responses:
         '200': { description: OK }
-  /me/messages:
+  /v1.0/me/messages:
     get:
       operationId: listMail
       summary: Listar correos
@@ -43,7 +44,7 @@ paths:
           description: Required when using $search
       responses:
         '200': { description: OK }
-  /me/messages/{id}:
+  /v1.0/me/messages/{id}:
     patch:
       operationId: updateMailCategories
       summary: Actualizar categorías del correo
@@ -64,7 +65,7 @@ paths:
                   items: { type: string }
       responses:
         '200': { description: OK }
-  /me/sendMail:
+  /v1.0/me/sendMail:
     post:
       operationId: sendMail
       summary: Enviar correo
@@ -79,15 +80,31 @@ paths:
                 saveToSentItems: { type: boolean }
       responses:
         '202': { description: Accepted }
-  /me/tasks:
+  /v1.0/me/todo/lists:
     get:
-      operationId: listTasks
-      summary: Listar tareas de To Do
+      operationId: listTodoLists
+      summary: Listar listas de To Do
+      responses:
+        '200': { description: OK }
+  /v1.0/me/todo/lists/{listId}/tasks:
+    get:
+      operationId: listTodoTasks
+      summary: Listar tareas de una lista de To Do
+      parameters:
+        - name: listId
+          in: path
+          required: true
+          schema: { type: string }
       responses:
         '200': { description: OK }
     post:
-      operationId: createTask
-      summary: Crear tarea en To Do
+      operationId: createTodoTask
+      summary: Crear tarea en una lista de To Do
+      parameters:
+        - name: listId
+          in: path
+          required: true
+          schema: { type: string }
       requestBody:
         required: true
         content:
@@ -99,7 +116,7 @@ paths:
                 dueDateTime: { type: object }
       responses:
         '201': { description: Created }
-  /me/events:
+  /v1.0/me/events:
     get:
       operationId: listEvents
       summary: Listar eventos del calendario
